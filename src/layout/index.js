@@ -1,6 +1,7 @@
 import "layout";
 import "bundle";
 import "chord";
+import "dag";
 import "force";
 import "partition";
 import "pie";
