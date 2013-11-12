@@ -5647,7 +5647,7 @@ d3 = function() {
     return chord;
   };
   d3.layout.dag = function() {
-    var self_ = {}, size_ = [ 1, 1 ], orientation_ = "tb", flip_ = false, ordAxis_ = "x", ordIdx_ = 0, rankAxis_ = "y", rankIdx_ = 1, nodeSeparation_ = 20, rankSize_ = 0, margin_ = [ 0, 0, 0, 0 ], userLinks_ = [], userNodes_ = [], links_ = [], nodes_ = [], roots_ = [], order_ = [];
+    var self_ = {}, size_ = [ 1, 1 ], orientation_ = "tb", flip_ = false, ordAxis_ = "x", ordIdx_ = 0, rankAxis_ = "y", rankIdx_ = 1, nodeSeparation_ = 20, rankSize_ = 0, selfLoopSize_ = 30, margin_ = [ 0, 0, 0, 0 ], userLinks_ = [], userNodes_ = [], links_ = [], nodes_ = [], roots_ = [], order_ = [];
     function flipLinks() {
       var ii, swap, link;
       for (ii = 0; ii < userLinks_.length; ++ii) {
@@ -6007,11 +6007,11 @@ d3 = function() {
       for (ii = 0; ii < userLinks_.length; ++ii) {
         link = userLinks_[ii];
         if (link.source == link.target) {
-          var pt1 = {}, pt2 = {}, pt3 = {}, pt4 = {};
+          var pt1 = {}, pt2 = {}, pt3 = {}, pt4 = {}, loopRankSize = Math.min(selfLoopSize_, rankSize_ / 2);
           pt1[ordAxis_] = pt2[ordAxis_] = link.source[ordAxis_] - nodeSeparation_ / 2;
           pt3[ordAxis_] = pt4[ordAxis_] = link.source[ordAxis_] + nodeSeparation_ / 2;
           pt1[rankAxis_] = pt4[rankAxis_] = link.source[rankAxis_];
-          pt2[rankAxis_] = pt3[rankAxis_] = link.source[rankAxis_] + rankSize_ / 2;
+          pt2[rankAxis_] = pt3[rankAxis_] = link.source[rankAxis_] + loopRankSize;
           link.path = [ link.source, pt1, pt2, pt3, pt4, link.source ];
         }
       }
