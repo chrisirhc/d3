@@ -5672,7 +5672,9 @@ d3 = function() {
             link = top.outputs[jj];
             if (!link.__visited__) {
               link.__visited__ = true;
-              if (link.target.__active__) link.__reverse__ = true; else if (!link.target.__visited__) {
+              if (link.target.__active__) {
+                link.__reverse__ = true;
+              } else if (!link.target.__visited__) {
                 top.__active__ = true;
                 stack.push(link.target);
                 break;
@@ -5697,7 +5699,6 @@ d3 = function() {
             userLink: link
           };
           delete link.__reverse__;
-          link.loop = true;
           link.source.outputs.splice(link.source.outputs.indexOf(link), 1);
           link.source.inputs.push(newLink);
           link.target.inputs.splice(link.target.inputs.indexOf(link), 1);
@@ -5725,7 +5726,7 @@ d3 = function() {
           if (link.target < 0 || link.target >= userNodes_.length) throw "Invalid link at index " + ii + " (target node " + link.target + " does not exist)";
           link.target = userNodes_[link.target];
         }
-        if (link.target == link.source) link.loop = true; else {
+        if (link.target != link.source) {
           link.target.inputs.push(link);
           link.source.outputs.push(link);
           links_.push(link);
