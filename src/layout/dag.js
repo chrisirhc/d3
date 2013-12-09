@@ -54,7 +54,9 @@ d3.layout.dag = function () {
                         link.__visited__ = true;
                         // If the target is active, it's an ancestor of this node, so this link
                         // is a back/reverse link.
-                        if (link.target.__active__) link.__reverse__ = true;
+                        if (link.target.__active__) {
+                            link.__reverse__ = true;
+                        }
                         else if (!link.target.__visited__) {
                             top.__active__ = true;
                             stack.push(link.target);
@@ -87,7 +89,6 @@ d3.layout.dag = function () {
                 
                 delete link.__reverse__;
                 
-                link.loop = true;
                 link.source.outputs.splice(link.source.outputs.indexOf(link), 1);
                 link.source.inputs.push(newLink);
                 link.target.inputs.splice(link.target.inputs.indexOf(link), 1);
@@ -125,8 +126,7 @@ d3.layout.dag = function () {
             }
             
             // Skip self edges in layout calculations
-            if (link.target == link.source) link.loop = true;
-            else {
+            if (link.target != link.source) {
                 link.target.inputs.push(link);
                 link.source.outputs.push(link);
                 links_.push(link);
