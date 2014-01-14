@@ -573,8 +573,9 @@ d3.layout.dag = function () {
                 var curTarget = link.target;
                 var path = [link.source, curTarget];
                 
-                while (curTarget.virtual && curTarget.outputs.length)
+                while (curTarget.virtual && curTarget.outputs.length) {
                     path.push(curTarget = curTarget.outputs[0].target);
+                }
 
                 if (link.reversed) path.reverse();
                 
