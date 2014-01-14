@@ -1,4 +1,7 @@
-
+/**
+ * Copyright 2011-2014 ThousandEyes
+ * Algorithm based on http://www.graphviz.org/Documentation/TSE93.pdf
+ */
 d3.layout.dag = function () {
     var self_ = {},
         size_ = [1, 1],
