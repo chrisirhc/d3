@@ -6016,12 +6016,34 @@ d3 = function() {
           link.path = [ link.source, pt1, pt2, pt3, pt4, link.source ];
         }
       }
+      var linksByEndpoints = {};
+      for (ii = 0; ii < links_.length; ++ii) {
+        link = links_[ii];
+        if (!link.source.virtual && !link.target.virtual) {
+          var key = link.source.index + "," + link.target.index;
+          if (linksByEndpoints[key]) {
+            link.__curve__ = true;
+            linksByEndpoints[key].__curve__ = true;
+          } else {
+            linksByEndpoints[key] = link;
+          }
+        }
+      }
       for (ii = 0; ii < links_.length; ++ii) {
         link = links_[ii];
         if (!link.source.virtual) {
           var curTarget = link.target;
           var path = [ link.source, curTarget ];
-          while (curTarget.virtual && curTarget.outputs.length) path.push(curTarget = curTarget.outputs[0].target);
+          while (curTarget.virtual && curTarget.outputs.length) {
+            path.push(curTarget = curTarget.outputs[0].target);
+          }
+          if (link.__curve__) {
+            var pt = {};
+            pt[ordAxis_] = link.source[ordAxis_] + (link.reversed ? 1 : -1) * nodeSeparation_ / 2;
+            pt[rankAxis_] = (link.source[rankAxis_] + curTarget[rankAxis_]) / 2;
+            path = [ link.source, pt, curTarget ];
+            delete link.__curve__;
+          }
           if (link.reversed) path.reverse();
           if (link.userLink) link.userLink.path = path; else link.path = path;
         }

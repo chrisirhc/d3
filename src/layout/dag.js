@@ -565,6 +565,27 @@ d3.layout.dag = function () {
             }
         }
         
+        // Find links that have the same source and target. This can happen when there is a simple
+        // cycle between two nodes. Mark them so they can be curved slightly to avoid overlapping.
+        var linksByEndpoints = {};
+        
+        for (ii = 0; ii < links_.length; ++ii) {
+            link = links_[ii];
+            
+            if (!link.source.virtual && !link.target.virtual) {
+                var key = link.source.index + ',' + link.target.index;
+                
+                if (linksByEndpoints[key]) {
+                    // Duplicate, mark both as needing a curve
+                    link.__curve__ = true;
+                    linksByEndpoints[key].__curve__ = true;
+                }
+                else {
+                    linksByEndpoints[key] = link;
+                }
+            }
+        }
+        
         // Now generate the real paths
         for (ii = 0; ii < links_.length; ++ii) {
             link = links_[ii];
@@ -577,6 +598,18 @@ d3.layout.dag = function () {
                     path.push(curTarget = curTarget.outputs[0].target);
                 }
 
+                // If the link is marked as needing to be curved, add an extra point. The path
+                // will curve up for non-reversed links and down for reversed links.
+                if (link.__curve__) {
+                    var pt = {};
+                
+                    pt[ordAxis_] = link.source[ordAxis_] + (link.reversed ? 1 : -1) * nodeSeparation_ / 2;
+                    pt[rankAxis_] = (link.source[rankAxis_] + curTarget[rankAxis_]) / 2;
+                    path = [link.source, pt, curTarget];
+                    
+                    delete link.__curve__;
+                }
+                
                 if (link.reversed) path.reverse();
                 
                 if (link.userLink) link.userLink.path = path;
